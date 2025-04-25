@@ -1,0 +1,47 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href="/assets") Assets
+  li.breadcrumb-item.active Edit Asset
+
+block content
+  .card.shadow-sm
+    .card-header
+      h5.mb-0 Edit Asset
+
+    .card-body
+      form(action=`/assets/${asset.id}?_method=PUT` method="post")
+        .row
+          .col-md-6.mb-3
+            label.form-label(for="name") Asset Name
+            input#name.form-control(type="text" name="name" required value=asset.name)
+          
+          .col-md-6.mb-3
+            label.form-label(for="category") Category
+            select#category.form-select(name="category")
+              option(value="" selected=(asset.category === undefined)) Select a Category
+              each category in categories
+                option(value=category.id selected=(asset.category && asset.category.id == category.id))= category.name
+
+          .col-md-6.mb-3
+            label.form-label(for="status") Status
+            select#status.form-select(name="status")
+              option(value="" selected=(asset.status === undefined)) Select Status
+              each status in statuses
+                option(value=status.id selected=(asset.status && asset.status.id == status.id))= status.name
+          
+          .col-md-6.mb-3
+            label.form-label(for="serialNumber") Serial Number
+            input#serialNumber.form-control(type="text" name="serialNumber" required value=asset.serialNumber)
+          
+          .col-md-6.mb-3
+            label.form-label(for="branch") Branch
+            select#branch.form-select(name="branch")
+              option(value="" selected=(asset.branch === undefined)) Select Branch
+              each branch in branches
+                option(value=branch.id selected=(asset.branch && asset.branch.id == branch.id))= branch.name
+
+        .d-flex.justify-content-between.mt-4
+          a.btn.btn-secondary(href="/assets") Cancel
+          button.btn.btn-primary(type="submit") Save Changes

@@ -1,0 +1,106 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item.active Employees
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    .d-flex.align-items-center
+      a.btn.btn-primary.me-2(href="/employees/new")
+        i.fas.fa-plus.me-1
+        | Add Employee
+      
+      button.btn.btn-outline-secondary.filter-toggle(data-target="#filterContainer")
+        i.fas.fa-filter.me-1
+        | Filters
+    
+    .input-group.w-auto
+      input#employeeSearch.form-control(type="text" placeholder="Search employees...")
+      span.input-group-text
+        i.fas.fa-search
+  
+  #filterContainer.collapse.mb-4
+    .card.shadow-sm
+      .card-body
+        form(action="/employees" method="get")
+          .row
+            .col-md-4.mb-3
+              label.form-label(for="statusFilter") Status
+              select#statusFilter.form-select(name="status")
+                option(value="" selected=(filters.status === undefined)) All Employees
+                option(value="active" selected=(filters.status === 'active')) Active Employees
+                option(value="inactive" selected=(filters.status === 'inactive')) Inactive Employees
+            
+            .col-md-4.mb-3
+              label.form-label(for="branchFilter") Branch
+              select#branchFilter.form-select(name="branch")
+                option(value="" selected=(filters.branch === undefined)) All Branches
+                each branch in branches
+                  option(value=branch.id selected=(filters.branch == branch.id))= branch.name
+            
+            .col-md-4.mb-3
+              label.form-label(for="searchFilter") Search
+              input#searchFilter.form-control(type="text" name="search" placeholder="Name, ID, Department..." value=filters.search)
+          
+          .d-flex.justify-content-end
+            button.btn.btn-secondary.me-2(type="reset") Reset
+            button.btn.btn-primary(type="submit") Apply Filters
+  
+  .card.shadow
+    .card-body
+      .table-responsive
+        table.table.table-hover.datatable
+          thead.table-light
+            tr
+              th Employee ID
+              th Name
+              th Email
+              th Department
+              th Position
+              th Branch
+              th Status
+              th Actions
+          tbody
+            each employee in employees
+              tr
+                td= employee.employeeId
+                td= employee.fullName
+                td= employee.email
+                td= employee.department
+                td= employee.position
+                td= employee.branch ? employee.branch.name : 'Unassigned'
+                td
+                  span.badge(class=employee.isActive ? 'bg-success' : 'bg-danger')
+                    = employee.isActive ? 'Active' : 'Inactive'
+                td
+                  .btn-group.btn-group-sm
+                    a.btn.btn-info(href=`/employees/${employee.id}` title="View")
+                      i.fas.fa-eye
+                    a.btn.btn-primary(href="/employees/#{employee.id}/edit" title="Edit")
+                      i.fas.fa-edit
+                    form.d-inline(action="/employees/#{employee.id}/toggle-status?_method=PUT" method="post" onsubmit="return confirm('Are you sure you want to #{employee.isActive ? 'deactivate' : 'activate'} this employee?')")
+                      button.btn.btn-warning(type="submit" title=employee.isActive ? 'Deactivate' : 'Activate')
+                        i(class=employee.isActive ? 'fas fa-user-slash' : 'fas fa-user-check')
+
+block scripts
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      // Search functionality for employees table
+      const employeeSearch = document.getElementById('employeeSearch');
+      if (employeeSearch) {
+        employeeSearch.addEventListener('keyup', function() {
+          const searchValue = this.value.toLowerCase();
+          const table = document.querySelector('.datatable');
+          const rows = table.querySelectorAll('tbody tr');
+          
+          rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchValue)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      }
+    });

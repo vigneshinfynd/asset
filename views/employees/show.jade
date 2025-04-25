@@ -1,0 +1,138 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href="/employees") Employees
+  li.breadcrumb-item.active= employee.fullName
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h2.h4.mb-0
+      span.badge.me-2(class=employee.isActive ? 'bg-success' : 'bg-danger')
+        = employee.isActive ? 'Active' : 'Inactive'
+      = `${employee.fullName} (${employee.employeeId})`
+    
+    .btn-group
+      a.btn.btn-primary(href=`/employees/${employee.id}/edit`)
+        i.fas.fa-edit.me-1
+        | Edit
+      form.d-inline(action=`/employees/${employee.id}/toggle-status?_method=PUT` method="post" onsubmit=`return confirm('Are you sure you want to ${employee.isActive ? 'deactivate' : 'activate'} this employee?')`)
+        button.btn.btn-warning(type="submit")
+          i(class=employee.isActive ? 'fas fa-user-slash' : 'fas fa-user-check')
+          span.ms-1= employee.isActive ? 'Deactivate' : 'Activate'
+  
+  .row
+    .col-md-6.mb-4
+      .card.shadow-sm.h-100
+        .card-header.bg-white 
+          h5.card-title.mb-0 Employee Information
+        .card-body
+          dl.row
+            dt.col-sm-4 Name
+            dd.col-sm-8= employee.fullName
+            
+            dt.col-sm-4 Employee ID
+            dd.col-sm-8= employee.employeeId
+            
+            dt.col-sm-4 Email
+            dd.col-sm-8= employee.email
+            
+            dt.col-sm-4 Department
+            dd.col-sm-8= employee.department
+            
+            dt.col-sm-4 Position
+            dd.col-sm-8= employee.position
+            
+            dt.col-sm-4 Branch
+            dd.col-sm-8= employee.branch ? employee.branch.name : 'Unassigned'
+            
+            dt.col-sm-4 Phone
+            dd.col-sm-8= employee.phoneNumber || 'N/A'
+            
+            dt.col-sm-4 Hire Date
+            dd.col-sm-8= employee.hireDate ? new Date(employee.hireDate).toLocaleDateString() : 'N/A'
+            
+            dt.col-sm-4 Status
+            dd.col-sm-8
+              span.badge(class=employee.isActive ? 'bg-success' : 'bg-danger')
+                = employee.isActive ? 'Active' : 'Inactive'
+    
+    .col-md-6.mb-4
+      .card.shadow-sm.h-100
+        .card-header.bg-white
+          h5.card-title.mb-0 Address & Notes
+        .card-body
+          if employee.address
+            h6 Address:
+            p= employee.address
+          else
+            p No address information available.
+          
+          hr
+          
+          h6 Actions:
+          .d-flex.flex-wrap.gap-2
+            a.btn.btn-primary.btn-sm(href=`/operations/issue?employeeId=${employee.id}`)
+              i.fas.fa-arrow-right.me-1
+              | Issue Asset
+            
+            if assignedAssets && assignedAssets.length > 0
+              a.btn.btn-warning.btn-sm(href="/operations/return")
+                i.fas.fa-arrow-left.me-1
+                | Return Asset
+  
+  h4.mt-4.mb-3 Assigned Assets
+  .card.shadow-sm.mb-4
+    .card-body
+      if assignedAssets && assignedAssets.length > 0
+        .table-responsive
+          table.table.table-hover.datatable
+            thead.table-light
+              tr
+                th Asset Tag
+                th Name
+                th Category
+                th Serial Number
+                th Actions
+            tbody
+              each asset in assignedAssets
+                tr
+                  td= asset.assetTag
+                  td= asset.name
+                  td= asset.category ? asset.category.name : 'Uncategorized'
+                  td= asset.serialNumber
+                  td
+                    .btn-group.btn-group-sm
+                      a.btn.btn-info(href=`/assets/${asset.id}` title="View Asset")
+                        i.fas.fa-eye
+                      a.btn.btn-warning(href=`/operations/return?assetId=${asset.id}` title="Return Asset")
+                        i.fas.fa-arrow-left
+      else
+        .alert.alert-info.mb-0 No assets currently assigned to this employee.
+  
+  h4.mt-4.mb-3 Transaction History
+  .card.shadow-sm
+    .card-body
+      if transactions && transactions.length > 0
+        .table-responsive
+          table.table.table-hover.datatable
+            thead.table-light
+              tr
+                th Date
+                th Asset
+                th Transaction
+                th Notes
+            tbody
+              each transaction in transactions
+                tr
+                  td= new Date(transaction.date).toLocaleDateString()
+                  td= transaction.asset ? transaction.asset.name : 'N/A'
+                  td
+                    span.badge(class=
+                      transaction.transactionType.name === 'Issue' ? 'bg-success' : 
+                      transaction.transactionType.name === 'Return' ? 'bg-warning' : 
+                      transaction.transactionType.name === 'Scrap' ? 'bg-danger' : 'bg-info')
+                      = transaction.transactionType.name
+                  td= transaction.notes || 'No notes'
+      else
+        .alert.alert-info.mb-0 No transaction history found for this employee.

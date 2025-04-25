@@ -1,0 +1,47 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/reports') Reports
+  li.breadcrumb-item.active
+    span Assets by Status
+
+block content
+  h1 Assets by Status Report
+
+  // Ensure messages is defined before checking for error or success
+  if messages && messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  if messages && messages.success
+    .alert.alert-success
+      p= messages.success
+
+  if statuses.length > 0
+    .table-responsive
+      table.table.table-bordered.table-hover
+        thead.table-light
+          tr
+            th Status
+            th Number of Assets
+            th Total Value
+        tbody
+          each status in statuses
+            tr
+              td= status.name
+              td.text-center= status.count
+              td.text-end $#{status.value.toFixed(2)}
+  else
+    p No assets available for this report.
+
+  .mt-4
+    p.font-weight-bold
+      | Total Assets: #{totalCount}
+      br
+      | Total Value: $#{totalValue.toFixed(2)}
+
+  .text-center.mt-4
+    a.btn.btn-primary(href='/reports') Back to Reports

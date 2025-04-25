@@ -1,0 +1,45 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/assets') Assets
+  li.breadcrumb-item.active Add New Asset
+
+block content
+  h1 Add New Asset
+  form(action='/assets' method='post')
+    .form-group
+      label(for='name') Name
+      input#name.form-control(type='text' name='name')
+
+    .form-group
+      label(for='serialNumber') Serial Number
+      input#serialNumber.form-control(type='text' name='serialNumber' required)
+
+    .form-group
+      label(for='assetTag') Asset Tag
+      input#assetTag.form-control(type='text' name='assetTag' required)
+
+    .form-group
+      label(for='category') Category
+      select#category.form-control(name='categoryId')
+        each category in categories
+          option(value=category.id)= category.name
+
+    .form-group
+      label(for='status') Status
+      select#status.form-control(name='statusId')
+        each status in statuses
+          option(value=status.id)= status.name
+
+    .form-group
+      label(for='branch') Branch
+      select#branch.form-control(name='branchId')
+        each branch in branches
+          option(value=branch.id)= branch.name
+
+    .form-group
+      label(for='purchaseDate') Purchase Date
+      input#purchaseDate.form-control(type='date' name='purchaseDate' value='2025-04-23')
+
+    button.btn.btn-primary(type='submit') Submit

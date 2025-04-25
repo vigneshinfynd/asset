@@ -1,0 +1,47 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/reports') Reports
+  li.breadcrumb-item.active
+    span Assets by Category
+
+block content
+  h1 Assets by Category Report
+
+  if messages && messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  if messages && messages.success
+    .alert.alert-success
+      p= messages.success
+
+  if categories && categories.length
+    .table-responsive
+      table.table.table-bordered.table-hover
+        thead.table-light
+          tr
+            th Category
+            th Number of Assets
+            th Total Value
+        tbody
+          each category in categories
+            tr
+              td= category.name
+              td.text-center= category.count
+              td.text-end $#{category.value.toFixed(2)}
+
+    .mt-4
+      p.font-weight-bold
+        | Total Assets: #{totalCount}
+        br
+        | Total Value: $#{totalValue.toFixed(2)}
+  else
+    .alert.alert-info
+      p No data available for this report.
+
+  .text-center.mt-4
+    a.btn.btn-primary(href='/reports') Back to Reports

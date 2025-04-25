@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  h1 Edit Category: #{category.name}
+
+  // Display any flash error message
+  if messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  form(action=`/categories/${category.id}?_method=PUT`, method='POST')
+    fieldset
+      legend Category Information
+      div.form-group
+        label(for='name') Category Name
+        input#name.form-control(type='text', name='name', value=category.name, required)
+      div.form-group
+        label(for='hardwareType') Hardware Type
+        select#hardwareType.form-control(name='hardwareType', required)
+          each hardwareType in hardwareTypes
+            option(value=hardwareType, selected=category.hardwareType === hardwareType) #{hardwareType}
+      div.form-group
+        button.btn.btn-primary(type='submit') Update Category
+
+  a.btn.btn-secondary(href='/categories') Cancel

@@ -1,0 +1,23 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/categories') Asset Categories
+  li.breadcrumb-item.active Delete Category
+
+block content
+  h1 Delete Category
+
+  // Display any flash error message
+  if messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  .alert.alert-warning
+    p Are you sure you want to delete the category: #{category.name}?
+
+  form(method="POST", action="/categories/#{category.id}/delete")
+    button(type="submit", class="btn btn-danger") Confirm Deletion
+    a.btn.btn-secondary(href="/categories") Cancel

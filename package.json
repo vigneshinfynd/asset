@@ -1,0 +1,31 @@
+{
+  "name": "asset-management-system",
+  "version": "1.0.0",
+  "description": "Asset Management System for tracking company assets",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "init-db": "node config/init-db.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.3.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "expres": "^0.0.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jade": "^1.11.0",
+    "method-override": "^3.0.0",
+    "moment": "^2.30.1",
+    "pg": "^8.15.1",
+    "pg-hstore": "^2.3.4",
+    "pug": "^3.0.3",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}

@@ -1,0 +1,159 @@
+extends layout
+
+block breadcrumb
+  // No additional breadcrumb items for Dashboard
+
+block content
+  .row
+    .col-xl-3.col-md-6.mb-4
+      .card.border-left-primary.shadow.h-100.py-2
+        .card-body
+          .row.no-gutters.align-items-center
+            .col.mr-2
+              .text-xs.font-weight-bold.text-primary.text-uppercase.mb-1 Total Assets
+              .h5.mb-0.font-weight-bold.text-gray-800= counts.assets
+            .col-auto
+              i.fas.fa-laptop.fa-2x.text-gray-300
+    
+    .col-xl-3.col-md-6.mb-4
+      .card.border-left-success.shadow.h-100.py-2
+        .card-body
+          .row.no-gutters.align-items-center
+            .col.mr-2
+              .text-xs.font-weight-bold.text-success.text-uppercase.mb-1 Total Employees
+              .h5.mb-0.font-weight-bold.text-gray-800= counts.employees
+            .col-auto
+              i.fas.fa-users.fa-2x.text-gray-300
+    
+    .col-xl-3.col-md-6.mb-4
+      .card.border-left-info.shadow.h-100.py-2
+        .card-body
+          .row.no-gutters.align-items-center
+            .col.mr-2
+              .text-xs.font-weight-bold.text-info.text-uppercase.mb-1 Branches
+              .h5.mb-0.font-weight-bold.text-gray-800= counts.branches
+            .col-auto
+              i.fas.fa-building.fa-2x.text-gray-300
+    
+    .col-xl-3.col-md-6.mb-4
+      .card.border-left-warning.shadow.h-100.py-2
+        .card-body
+          .row.no-gutters.align-items-center
+            .col.mr-2
+              .text-xs.font-weight-bold.text-warning.text-uppercase.mb-1 Asset Categories
+              .h5.mb-0.font-weight-bold.text-gray-800= counts.categories
+            .col-auto
+              i.fas.fa-tags.fa-2x.text-gray-300
+  
+  .row
+    .col-lg-6.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3.d-flex.flex-row.align-items-center.justify-content-between
+          h6.m-0.font-weight-bold.text-primary Assets by Status
+          a.btn.btn-sm.btn-primary(href="/reports/assets-by-status")
+            i.fas.fa-external-link-alt.me-1
+            | Full Report
+        .card-body
+          .chart-container
+            canvas#assetStatusChart
+    
+    .col-lg-6.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3.d-flex.flex-row.align-items-center.justify-content-between
+          h6.m-0.font-weight-bold.text-primary Assets by Category
+          a.btn.btn-sm.btn-primary(href="/reports/assets-by-category")
+            i.fas.fa-external-link-alt.me-1
+            | Full Report
+        .card-body
+          .chart-container
+            canvas#assetCategoryChart
+  
+  .row
+    .col-12.mb-4
+      .card.shadow.mb-4
+        .card-header.py-3
+          h6.m-0.font-weight-bold.text-primary Recent Transactions
+        .card-body
+          if recentTransactions && recentTransactions.length
+            .table-responsive
+              table.table.table-bordered.table-hover
+                thead.table-light
+                  tr
+                    th Date
+                    th Asset
+                    th Employee
+                    th Transaction Type
+                tbody
+                  each transaction in recentTransactions
+                    tr
+                      td= new Date(transaction.date).toLocaleDateString()
+                      td= transaction.asset ? `${transaction.asset.name} (${transaction.asset.assetTag})` : 'N/A'
+                      td= transaction.employee ? transaction.employee.fullName : 'N/A'
+                      td
+                        span.badge(class=transaction.transactionType.name === 'Issue' ? 'bg-success' : 
+                                       transaction.transactionType.name === 'Return' ? 'bg-warning' : 
+                                       transaction.transactionType.name === 'Scrap' ? 'bg-danger' : 'bg-info')
+                          = transaction.transactionType.name
+          else
+            p.text-center.my-3 No recent transactions found.
+          
+          .text-center.mt-3
+            a.btn.btn-primary(href="/reports/transactions")
+              i.fas.fa-list.me-1
+              | View All Transactions
+
+block scripts
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js")
+  script.
+    // Dummy data for charts - in a real app, this would come from the server
+    document.addEventListener('DOMContentLoaded', function() {
+      // Asset Status Chart
+      const statusCtx = document.getElementById('assetStatusChart').getContext('2d');
+      const statusChart = new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+          labels: ['Available', 'Assigned', 'Under Repair', 'Scrapped'],
+          datasets: [{
+            data: [40, 30, 10, 20],
+            backgroundColor: ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+      
+      // Asset Category Chart
+      const categoryCtx = document.getElementById('assetCategoryChart').getContext('2d');
+      const categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Laptop', 'Mobile Phone', 'Monitor', 'Tablet', 'Tools'],
+          datasets: [{
+            label: 'Number of Assets',
+            data: [25, 15, 20, 10, 5],
+            backgroundColor: '#36b9cc'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });

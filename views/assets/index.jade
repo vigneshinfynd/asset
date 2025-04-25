@@ -1,0 +1,113 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item.active Assets
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    .d-flex.align-items-center
+      a.btn.btn-primary.me-2(href="/assets/new")
+        i.fas.fa-plus.me-1
+        | Add Asset
+      button.btn.btn-outline-secondary.filter-toggle(data-target="#filterContainer")
+        i.fas.fa-filter.me-1
+        | Filters
+    .input-group.w-auto
+      input#assetSearch.form-control(type="text" placeholder="Search assets...")
+      span.input-group-text
+        i.fas.fa-search
+
+  #filterContainer.collapse.mb-4
+    .card.shadow-sm
+      .card-body
+        form(action="/assets" method="get")
+          .row.g-3
+            .col-md-3
+              label.form-label(for="categoryFilter") Category
+              select#categoryFilter.form-select(name="category")
+                option(value="" selected=(filters.category === undefined)) All Categories
+                each category in categories
+                  option(value=category.id selected=(filters.category == category.id))= category.name
+            .col-md-3
+              label.form-label(for="statusFilter") Status
+              select#statusFilter.form-select(name="status")
+                option(value="" selected=(filters.status === undefined)) All Statuses
+                each status in statuses
+                  option(value=status.id selected=(filters.status == status.id))= status.name
+            .col-md-3
+              label.form-label(for="branchFilter") Branch
+              select#branchFilter.form-select(name="branch")
+                option(value="" selected=(filters.branch === undefined)) All Branches
+                each branch in branches
+                  option(value=branch.id selected=(filters.branch == branch.id))= branch.name
+            .col-md-3
+              label.form-label(for="searchFilter") Search
+              input#searchFilter.form-control(type="text" name="search" placeholder="Tag, Serial, Model..." value=filters.search)
+          .d-flex.justify-content-end.mt-3
+            button.btn.btn-secondary.me-2(type="reset") Reset
+            button.btn.btn-primary(type="submit") Apply Filters
+
+  .card.shadow
+    .card-body
+      .table-responsive
+        table.table.table-hover.datatable
+          thead.table-light
+            tr
+              th Asset Tag
+              th Name
+              th Category
+              th Status
+              th Serial Number
+              th Assigned To
+              th Branch
+              th Actions
+          tbody
+            each asset in assets
+              tr
+                td= asset.assetTag
+                td= asset.name
+                td= asset.category ? asset.category.name : 'Uncategorized'
+                td
+                  span.badge(class=
+                    asset.status && asset.status.name === 'Available' ? 'bg-success' : 
+                    asset.status && asset.status.name === 'Assigned' ? 'bg-primary' : 
+                    asset.status && asset.status.name === 'Under Repair' ? 'bg-warning' : 
+                    asset.status && asset.status.name === 'Scrapped' ? 'bg-danger' : 'bg-secondary')
+                    = asset.status && asset.status.name ? asset.status.name : 'Unknown'
+                td= asset.serialNumber
+                td= asset.currentEmployee ? asset.currentEmployee.fullName : 'Unassigned'
+                td= asset.branch ? asset.branch.name : 'Unassigned'
+                td
+                  .btn-group.btn-group-sm
+                    a.btn.btn-info(href=`/assets/${asset.id}` title="View")
+                      i.fas.fa-eye
+                    a.btn.btn-primary(href='/assets/' + asset.id + '/edit' title="Edit")
+                      i.fas.fa-edit
+                    if asset.status && asset.status.name === 'Available'
+                      a.btn.btn-success(href='/operations/issue?assetId=' + asset.id title="Issue Asset")
+                        i.fas.fa-arrow-right
+                    else if asset.status && asset.status.name === 'Assigned'
+                      a.btn.btn-warning(href=`/operations/return?assetId=${asset.id}` title="Return Asset")
+                        i.fas.fa-arrow-left
+                    if asset.status && asset.status.name !== 'Scrapped'
+                      a.btn.btn-danger(href=`/operations/scrap?assetId=${asset.id}` title="Scrap Asset")
+                        i.fas.fa-trash-alt
+                    a.btn.btn-secondary(href=`/operations/history/${asset.id}` title="View History")
+                      i.fas.fa-history
+
+block scripts
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const assetSearch = document.getElementById('assetSearch');
+      if (assetSearch) {
+        assetSearch.addEventListener('keyup', function() {
+          const searchValue = this.value.toLowerCase();
+          const table = document.querySelector('.datatable');
+          const rows = table.querySelectorAll('tbody tr');
+          rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
+          });
+        });
+      }
+    });

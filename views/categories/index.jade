@@ -1,0 +1,35 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item.active Asset Categories
+
+block content
+  h1 Asset Categories
+
+  // Display any flash error message
+  if messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  .d-flex.justify-content-between.align-items-center.mb-4
+    a.btn.btn-primary(href='/categories/new')
+      i.fas.fa-plus.me-1
+      | Add New Category
+
+  table.table.table-striped
+    thead
+      tr
+        th Name
+        th Asset Count
+        th Actions
+    tbody
+      each category in categories
+        tr
+          td= category.name
+          td= category.assetCount
+          td
+            a.btn.btn-info(href='/assets/create?categoryId=' + category.id) Add Asset
+            a.btn.btn-warning(href='/categories/' + category.id + '/edit') Edit
+            a.btn.btn-danger(href='/categories/' + category.id + '/delete') Delete

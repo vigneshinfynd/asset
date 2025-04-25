@@ -1,0 +1,38 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/categories') Asset Categories
+  li.breadcrumb-item.active Add New Category
+
+block content
+  h1 Add New Category
+
+  // Display any flash error message
+  if messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  if messages.success
+    .alert.alert-success
+      p= messages.success
+
+  form(action="/categories" method="post")
+    .mb-3
+      label(for="name") Name
+      input.form-control(type="text" id="name" name="name" required)
+
+    .mb-3
+      label(for="hardwareType") Hardware Type
+      select.form-select(id="hardwareType" name="hardwareType" required)
+        option(value="Laptop") Laptop
+        option(value="Mobile Phone") Mobile Phone
+        option(value="Screw Driver") Screw Driver
+        option(value="Drill Machine") Drill Machine
+        option(value="Other") Other
+
+    .mb-3
+      button.btn.btn-primary(type="submit") Save Category
+    a.btn.btn-secondary(href="/categories") Cancel

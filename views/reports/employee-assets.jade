@@ -1,0 +1,54 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/reports') Reports
+  li.breadcrumb-item.active
+    span Employee Assets
+
+block content
+  h1 Employee Assets Report
+
+  // Display error message if exists
+  if messages && messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  // Display success message if exists
+  if messages && messages.success
+    .alert.alert-success
+      p= messages.success
+
+  // Check if employee data exists and display it in a table
+  if employees.length > 0
+    .table-responsive
+      table.table.table-bordered.table-hover
+        thead.table-light
+          tr
+            th Employee Name
+            th Employee ID
+            th Department
+            th Number of Assets
+            th Total Value
+        tbody
+          each employee in employees
+            tr
+              td= employee.name
+              td= employee.employeeId
+              td= employee.department
+              td.text-center= employee.count
+              td.text-end $#{employee.value.toFixed(2)}
+
+  else
+    p No employee assets data available for this report.
+
+  .mt-4
+    p.font-weight-bold
+      | Total Employees with Assets: #{totalCount}
+      br
+      | Total Asset Value: $#{totalValue.toFixed(2)}
+
+  .text-center.mt-4
+    a.btn.btn-primary(href='/reports') Back to Reports

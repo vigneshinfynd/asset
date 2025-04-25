@@ -1,0 +1,81 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href="/employees") Employees
+  li.breadcrumb-item
+    a(href=`/employees/${employee.id}`)= employee.fullName
+  li.breadcrumb-item.active Edit
+
+block content
+  .card.shadow
+    .card-body
+      form.needs-validation(action=`/employees/${employee.id}?_method=PUT` method="post" novalidate)
+        .row
+          .col-md-6.mb-3
+            label.form-label.required(for="firstName") First Name
+            input#firstName.form-control(type="text" name="firstName" value=employee.firstName required)
+            .invalid-feedback Please provide a first name.
+          
+          .col-md-6.mb-3
+            label.form-label.required(for="lastName") Last Name
+            input#lastName.form-control(type="text" name="lastName" value=employee.lastName required)
+            .invalid-feedback Please provide a last name.
+        
+        .row
+          .col-md-6.mb-3
+            label.form-label.required(for="email") Email
+            input#email.form-control(type="email" name="email" value=employee.email required)
+            .invalid-feedback Please provide a valid email address.
+          
+          .col-md-6.mb-3
+            label.form-label.required(for="employeeId") Employee ID
+            input#employeeId.form-control(type="text" name="employeeId" value=employee.employeeId required)
+            .invalid-feedback Please provide an employee ID.
+        
+        .row
+          .col-md-6.mb-3
+            label.form-label.required(for="department") Department
+            input#department.form-control(type="text" name="department" value=employee.department required)
+            .invalid-feedback Please provide a department.
+          
+          .col-md-6.mb-3
+            label.form-label.required(for="position") Position
+            input#position.form-control(type="text" name="position" value=employee.position required)
+            .invalid-feedback Please provide a position.
+        
+        .row
+          .col-md-6.mb-3
+            label.form-label.required(for="branchId") Branch
+            select#branchId.form-control.form-select(name="branchId" required)
+              option(value="" disabled) Select a branch
+              option(value="1" selected=employee.branchId == 1) IT
+              option(value="2" selected=employee.branchId == 2) Hardware
+              option(value="3" selected=employee.branchId == 3) HR
+              option(value="4" selected=employee.branchId == 4) Finance
+              option(value="5" selected=employee.branchId == 5) Marketing
+            .invalid-feedback Please select a branch.
+          
+          .col-md-6.mb-3
+            label.form-label(for="phoneNumber") Phone Number
+            input#phoneNumber.form-control(type="text" name="phoneNumber" value=employee.phoneNumber)
+        
+        .row
+          .col-md-6.mb-3
+            label.form-label(for="hireDate") Hire Date
+            input#hireDate.form-control(type="date" name="hireDate" value=employee.hireDate ? new Date(employee.hireDate).toISOString().slice(0, 10) : '')
+          
+          .col-md-6.mb-3
+            label.form-label(for="isActive") Status
+            select#isActive.form-control.form-select(name="isActive")
+              option(value="true" selected=employee.isActive) Active
+              option(value="false" selected=!employee.isActive) Inactive
+        
+        .row
+          .col-md-12.mb-3
+            label.form-label(for="address") Address
+            textarea#address.form-control(name="address" rows="2")= employee.address
+        
+        .d-flex.justify-content-end.mt-4
+          a.btn.btn-secondary.me-2(href=`/employees/${employee.id}`) Cancel
+          button.btn.btn-primary(type="submit") Update Employee

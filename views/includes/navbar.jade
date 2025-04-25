@@ -1,0 +1,57 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-primary.fixed-top
+  .container-fluid
+    a.navbar-brand(href="/")
+      i.fas.fa-laptop.me-2
+      | Asset Management
+    
+    button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+      span.navbar-toggler-icon
+    
+    #navbarSupportedContent.collapse.navbar-collapse
+      ul.navbar-nav.me-auto.mb-2.mb-lg-0
+        li.nav-item
+          a.nav-link(href="/" class=currentPath === '/' ? 'active' : '')
+            i.fas.fa-tachometer-alt.me-1
+            | Dashboard
+        
+        li.nav-item
+          a.nav-link(href="/employees" class=currentPath.startsWith('/employees') ? 'active' : '')
+            i.fas.fa-users.me-1
+            | Employees
+        
+        li.nav-item
+          a.nav-link(href="/assets" class=currentPath.startsWith('/assets') ? 'active' : '')
+            i.fas.fa-laptop.me-1
+            | Assets
+        
+        li.nav-item.dropdown
+          a.nav-link.dropdown-toggle(href="#" id="operationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" class=currentPath.startsWith('/operations') ? 'active' : '')
+            i.fas.fa-exchange-alt.me-1
+            | Operations
+          ul.dropdown-menu(aria-labelledby="operationsDropdown")
+            li
+              a.dropdown-item(href="/operations/stock")
+                i.fas.fa-boxes.me-1
+                | Stock View
+            li
+              a.dropdown-item(href="/operations/issue")
+                i.fas.fa-arrow-right.me-1
+                | Issue Asset
+            li
+              a.dropdown-item(href="/operations/return")
+                i.fas.fa-arrow-left.me-1
+                | Return Asset
+            li
+              a.dropdown-item(href="/operations/scrap")
+                i.fas.fa-trash-alt.me-1
+                | Scrap Asset
+        
+        li.nav-item
+          a.nav-link(href="/reports" class=currentPath.startsWith('/reports') ? 'active' : '')
+            i.fas.fa-chart-bar.me-1
+            | Reports
+      
+      form.d-flex
+        input.form-control.me-2(type="search" placeholder="Search assets..." aria-label="Search")
+        button.btn.btn-light(type="submit")
+          i.fas.fa-search

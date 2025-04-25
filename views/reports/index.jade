@@ -1,0 +1,40 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item.active
+    span Reports
+
+block content
+  h1 Reports Dashboard
+
+  .row
+    .col-md-4
+      .card
+        .card-body
+          h5.card-title Reports by Category
+          p.card-text Display a summary of assets by category.
+          a.btn.btn-primary(href='/reports/assets-by-category') View Report
+
+    .col-md-4
+      .card
+        .card-body
+          h5.card-title Reports by Status
+          p.card-text Display a summary of assets by status.
+          a.btn.btn-primary(href='/reports/assets-by-status') View Report
+
+    .col-md-4
+      .card
+        .card-body
+          h5.card-title Employee Assets
+          p.card-text Display a summary of assets per employee.
+          a.btn.btn-primary(href='/reports/employee-assets') View Report
+
+  .row.mt-4
+    .col-md-4
+      .card
+        .card-body
+          h5.card-title Transactions Report
+          p.card-text Display a summary of asset transactions.
+          a.btn.btn-primary(href='/reports/transactions') View Report

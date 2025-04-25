@@ -1,0 +1,57 @@
+extends ../layout
+
+block content
+  h1 #{title}
+
+  if asset
+    dl
+      dt Name
+      dd #{asset.name}
+
+      dt Asset Tag
+      dd #{asset.assetTag}
+
+      dt Serial Number
+      dd #{asset.serialNumber}
+
+      dt Manufacturer
+      dd #{asset.manufacturer}
+
+      dt Model
+      dd #{asset.model}
+
+      dt Category
+      dd #{asset.category ? asset.category.name : 'N/A'}
+
+      dt Status
+      dd #{asset.status ? asset.status.name : 'N/A'}
+
+      dt Branch
+      dd #{asset.branch ? asset.branch.name : 'N/A'}
+
+      dt Current Employee
+      dd #{asset.currentEmployee ? asset.currentEmployee.name : 'N/A'}
+
+    h2 Transaction History
+    if transactions.length
+      table
+        thead
+          tr
+            th Date
+            th Type
+            th Employee
+            th Branch
+            th Notes
+        tbody
+          each transaction in transactions
+            tr
+              td #{transaction.date.toDateString()}
+              td #{transaction.transactionType ? transaction.transactionType.name : 'N/A'}
+              td #{transaction.employee ? transaction.employee.name : 'N/A'}
+              td #{transaction.branch ? transaction.branch.name : 'N/A'}
+              td #{transaction.notes || 'N/A'}
+    else
+      p No transaction history available.
+
+  else
+    p Asset not found.

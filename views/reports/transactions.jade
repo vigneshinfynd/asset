@@ -1,0 +1,58 @@
+extends ../layout
+
+block breadcrumb
+  li.breadcrumb-item
+    a(href='/') Home
+  li.breadcrumb-item
+    a(href='/reports') Reports
+  li.breadcrumb-item.active
+    span Transactions Report
+
+block content
+  h1 Transactions Report
+
+  if messages && messages.error
+    .alert.alert-danger
+      p= messages.error
+
+  if messages && messages.success
+    .alert.alert-success
+      p= messages.success
+
+  form(method='get', action='/transactions')
+    .row.mb-3
+      .col-md-6
+        label(for='startDate') Start Date:
+        input.form-control(type='date', name='startDate', value=startDate ? startDate.toISOString().split('T')[0] : '')
+      .col-md-6
+        label(for='endDate') End Date:
+        input.form-control(type='date', name='endDate', value=endDate ? endDate.toISOString().split('T')[0] : '')
+    .text-center.mt-3
+      button.btn.btn-primary(type='submit') Filter
+
+  if transactions && transactions.length
+    .table-responsive.mt-4
+      table.table.table-bordered.table-hover
+        thead.table-light
+          tr
+            th Date
+            th Transaction Type
+            th Asset
+            th Category
+            th Employee
+            th Branch
+        tbody
+          each transaction in transactions
+            tr
+              td= transaction.date.toISOString().split('T')[0]
+              td= transaction.transactionType && transaction.transactionType.name ? transaction.transactionType.name : 'N/A'
+              td= transaction.asset && transaction.asset.name ? transaction.asset.name : 'N/A'
+              td= transaction.asset && transaction.asset.category && transaction.asset.category.name ? transaction.asset.category.name : 'N/A'
+              td= transaction.employee && transaction.employee.fullName ? transaction.employee.fullName : 'N/A'
+              td= transaction.branch && transaction.branch.name ? transaction.branch.name : 'N/A'
+  else
+    .alert.alert-info.mt-4
+      p No transactions found for the selected date range.
+
+  .text-center.mt-4
+    a.btn.btn-secondary(href='/reports') Back to Reports
